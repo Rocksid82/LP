@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define N 1024
+#define BLOCK_SIZE 16
+
+__global__ void matrixMul(int *a, int *b, int *c, int width) {
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    int sum = 0;
+    for (int i = 0; i < width; i++) {
+        sum += a[row * width + i] * b[i * width + col];
+    }
+    c[row * width + col] = sum;
+}
+
+int main() {
+    int *a, *b, *c;
+    int *d_a, *d_b, *d_c;
+    int size = N * N * sizeof(int);
+
+    // Allocate memory on host
+    a = (int*)malloc(size);
+    b = (int*)malloc(size);
+    c = (int*)malloc(size);
+
+    // Initialize matrices
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            a[i * N + j] = i + j;
+            b[i * N + j] = i - j;
+        }
+    }
+
+    // Allocate memory on device
+    cudaMalloc(&d_a, size);
+    cudaMalloc(&d_b, size);
+    cudaMalloc(&d_c, size);
+
+    // Copy data from host to device
+    cudaMemcpy(d_a, a, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_b, b, size, cudaMemcpyHostToDevice);
+
+    // Launch kernel with 2D grid and 2D block
+    dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE);
+    dim3 dimGrid((N + dimBlock.x - 1) / dimBlock.x, (N + dimBlock.y - 1) / dimBlock.y);
+    matrixMul<<<dimGrid, dimBlock>>>(d_a, d_b, d_c, N);
+
+    // Copy result from device to host
+    cudaMemcpy(c, d_c, size, cudaMemcpyDeviceToHost);
+
+    // Print first and last elements of result
+    printf("c[0][0] = %d, c[%d][%d] = %d", c[0], N-1, N-1, c[(N-1) * N + (N-1)]);
+
+    // Free memory
+    free(a);
+    free(b);
+    free(c);
+    cudaFree(d_a);
+    cudaFree(d_b);
+    cudaFree(d_c);
+
+    return 0;
+}
+
+
+ The code begins by allocating memory on the host for a, b, and c. Then it copies data from the host to device using cudaMemcpyHostToDevice.
+ int *a, *b, *c; int size = N * N * sizeof(int); // Allocate memory on host a = (int*)malloc(size); // Initialize matrices b = (int*)malloc(size); // Initialize matrices int*d_a, d_b, d_c; // Allocate memory on device
+ The code is a basic example of how to use the cudaMemcpy() function.
+ The following code is an example of how to call the matrixMul() function from the main() function: int *a, *b, *c; int size = N * N * sizeof(int); // Allocate memory on host a = (int*)malloc(size); b = (int*)malloc(size); c = (int*)malloc(size); // Initialize matrices for (int i = 0; i < N; i++) { for (int j = 0; j < N; j++) {
+ The code starts by declaring a dim3 array called dimBlock.
+ This is the size of each block in the grid, which will be 2x2.
+ The next line declares a dim3 array called dimGrid that has (N+dimBlock.x-1) / dimBlock.x and (N+dimBlock.y-1) / dimBlock.y dimensions for N=4, so it's 4x4 blocks in total with one empty space between them at the top left corner of the screen where there are 3 blocks on either side of it and 1 block above it to make up an 8x8 grid with 16 blocks total The code then multiplies d_a by d_b by d_c using matrixMul<<>>(d_a,d_b,d_c,N).
+ Matrix multiplication is used because this operation requires two matrices to be multiplied together as well as three scalars being multiplied together Finally cudaMemcpyDeviceToHost copies all of these values from device memory into host memory
+ The code is a kernel that multiplies two matrices together.
+ The first matrix is a 3x3 grid of blocks and the second matrix is a 3x3 block of data.
+ The result from the device to host will be a 4x4 grid of blocks and 4x4 block of data.
+ The following code demonstrates how to use the cudaMemcpy() function: // Copy input from device to host cudaMemcpy(d_a, d_b, size, cudaMemcpyDeviceToHost); // Copy output from host to device cudaMemcpy(d_c, size, d_a, cudaMemc

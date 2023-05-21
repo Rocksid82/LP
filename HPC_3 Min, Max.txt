@@ -1,0 +1,93 @@
+/*
+
+
+Implement Min, Max, Sum and Average operations using Parallel 
+Reduction.
+*/
+#include <iostream>
+//#include <vector>
+#include <omp.h>
+#include <climits>
+using namespace std;
+void min_reduction(int arr[], int n) {
+  int min_value = INT_MAX;
+  #pragma omp parallel for reduction(min: min_value)
+  for (int i = 0; i < n; i++) {
+	if (arr[i] < min_value) {
+  	min_value = arr[i];
+	}
+  }
+  cout << "Minimum value: " << min_value << endl;
+}
+
+void max_reduction(int arr[], int n) {
+  int max_value = INT_MIN;
+  #pragma omp parallel for reduction(max: max_value)
+  for (int i = 0; i < n; i++) {
+	if (arr[i] > max_value) {
+  	max_value = arr[i];
+	}
+  }
+  cout << "Maximum value: " << max_value << endl;
+}
+
+void sum_reduction(int arr[], int n) {
+  int sum = 0;
+   #pragma omp parallel for reduction(+: sum)
+   for (int i = 0; i < n; i++) {
+	sum += arr[i];
+  }
+  cout << "Sum: " << sum << endl;
+}
+
+void average_reduction(int arr[], int n) {
+  int sum = 0;
+  #pragma omp parallel for reduction(+: sum)
+  for (int i = 0; i < n; i++) {
+	sum += arr[i];
+  }
+  cout << "Average: " << (double)sum / (n-1) << endl;
+}
+
+int main() {
+    int *arr,n;
+    cout<<"\n enter total no of elements=>";
+    cin>>n;
+    arr=new int[n];
+    cout<<"\n enter elements=>";
+    for(int i=0;i<n;i++)
+    {
+   	 cin>>arr[i];
+    }
+
+//   int arr[] = {5, 2, 9, 1, 7, 6, 8, 3, 4};
+//   int n = size(arr);
+
+  min_reduction(arr, n);
+  max_reduction(arr, n);
+  sum_reduction(arr, n);
+  average_reduction(arr, n);
+}
+--------------------------------------------------------------------------------------------------------------------
+Vectors in C++ are sequence containers representing arrays that can change their size during runtime. They use contiguous storage locations for their elements just as efficiently as in arrays, which means that their elements can also be accessed using offsets on regular pointers to its elements.
+
+OpenMP is typically used for loop-level parallelism, but it also supports function-level parallelism. This mechanism is called OpenMP sections. The structure of sections is straightforward and can be useful in many instances. Consider one of the most important algorithms in computer science, the quicksort.
+
+The macros defined in this header, limits the values of various variable types like char, int and long. These limits specify that a variable cannot store any value beyond these limits, for example an unsigned character can store up to a maximum value of 255.
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+ The code is a function that takes an array of integers and returns the minimum, maximum, sum, or average value.
+ The code is written in C++ with OpenMP parallelism.
+ The first line declares the variables for the function: int arr[], n; arr will be used to store all of the values from 0-n-1 into an array.
+ n will be used to keep track of how many elements are in arr[] and it is initialized on line 2 with "cin>>n;" .
+ On line 3 we declare a new int called arr[].
+ This variable will hold all of the values from 0-n-1 as well.
+ The code attempts to demonstrate the use of reduction operations in OpenMP.
+ The code above contains a number of functions that are used for different purposes, these include min_reduction(), max_reduction(), sum_reduction() and average_reduction().
+ These functions are used as follows: 1) min_reduction(): This function takes an input array and a number of iterations, it then returns the minimum value found in the input array.
+ 2) max_reduction(): This function takes an input array and a number of iterations, it then returns the maximum value found in the input array.
+ 3) sum_reduction(): This function takes an input array and a number of iterations

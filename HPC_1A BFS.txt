@@ -1,0 +1,155 @@
+
+Design and implement Parallel Breadth First Search based on existing
+algorithms using OpenMP. Use a Tree or an undirected graph for BFS
+
+#include<iostream>
+#include<stdlib.h>
+#include<queue>
+using namespace std;
+class node
+{
+    public:
+ 
+    node *left, *right;
+    int data;
+}; 
+
+class Breadthfs
+{
+    public:
+    node *insert(node *, int);
+    void bfs(node *);
+};
+
+node *insert(node *root, int data)
+// inserts a node in tree
+{
+    if(!root)
+    {
+ 
+        root=new node;
+
+        root->left=NULL;
+        root->right=NULL;
+        root->data=data;
+    
+        return root;
+    }
+ 
+    queue<node *> q;
+    q.push(root);
+ 
+    while(!q.empty())
+    {
+        node *temp=q.front();
+        q.pop();
+ 
+        if(temp->left==NULL)
+        {
+ 
+            temp->left=new node;
+            temp->left->left=NULL;
+            temp->left->right=NULL;
+            temp->left->data=data; 
+            return root;
+        }
+        else
+        {
+            q.push(temp->left);
+        }
+ 
+        if(temp->right==NULL)
+        {
+ 
+            temp->right=new node;
+            temp->right->left=NULL;
+            temp->right->right=NULL;
+
+            temp->right->data=data; 
+            return root;
+        }
+        else
+        {
+            q.push(temp->right);
+        }
+    }
+ 
+}
+
+void bfs(node *head)
+{
+    queue<node*> q;
+    q.push(head);
+ 
+    int qSize;
+ 
+    while (!q.empty())
+    {
+        qSize = q.size();
+        #pragma omp parallel for
+        //creates parallel threads
+        for (int i = 0; i < qSize; i++)
+        {
+ 	        node* currNode;
+ 	        #pragma omp critical
+ 	        {
+ 		        currNode = q.front();
+ 		        q.pop();
+ 		        cout<<"\t"<<currNode->data;
+ 
+ 	        }// prints parent node
+ 	        #pragma omp critical
+ 	        {
+ 		        if(currNode->left)// push parent's left node in queue
+ 		            q.push(currNode->left);
+ 		        if(currNode->right)
+ 		            q.push(currNode->right);
+ 	        }// push parent's right node in queue 
+        }
+    }
+}
+
+int main(){
+ 	node *root=NULL;
+ 	int data;
+ 	char ans;
+ 
+    do
+    {
+        cout<<"\n enter data=>";
+ 	    cin>>data;
+ 
+ 	    root=insert(root,data);
+ 
+ 	    cout<<"do you want insert one more node?";
+        cin>>ans;
+ 
+    }while(ans=='y'||ans=='Y');
+ 
+    bfs(root);
+ 
+    return 0;
+}
+------------------------------------------------------------------
+stdlib in C, declares various utility functions for type conversions, memory allocation, algorithms, and other similar use cases. stdlib. h can be imported by adding #include <stdlib. h> at the top of the program
+----------------------------------------------------------------------
+
+ The code starts by declaring a node class.
+ The class has two members, left and right pointers that point to the nodes in the tree.
+ It also has an integer data member that stores the value of whatever is stored in it's parent node.
+ The Breadth-First Search algorithm starts with head as its root node and then inserts new nodes into the queue until there are no more nodes to insert or until it reaches a leaf node (a node without any children).
+ In this case, when it reaches a leaf, it returns back to where it started from.
+ The code is used to insert a node in the tree.
+ The function inserts a node in the tree by first checking if the root node exists, and if not, it creates a new one with all three fields set to NULL.
+ After inserting the new node into the queue, it then proceeds to iterate through each of its children nodes and create them accordingly.
+ The bfs function will iterate through each of its children nodes and print their values on screen as they are encountered.
+ The code starts by creating a node object called root.
+ The code then creates an integer variable called data and sets it to 0.
+ Next, the code creates a char variable called ans and assigns it the value 'A'.
+ The code starts by declaring that there is no parent node in the queue.
+ Then, inside of a loop, the program prints out each child node in order from left to right using omp parallel for.
+ Inside of this loop, if any child has its left or right pointer set to NULL (meaning they are not pointing at anything), then those pointers are pushed onto their parents' queue with qpush().
+ If either one does have its left or right pointer set to something else (meaning they are pointing at another child), then those pointers are also pushed onto their parents' queue with qpush().
+ After printing out all of the children nodes on both sides of the tree, inside of another critical section block: if(currNode->left) // push parent's left node in queue { q.push(currNode->left); }// push parent's left node in queue
+ The code creates a queue of nodes.
+ The nodes are created in the following order: 1) root node 2) left node of root node 3) right node of root node

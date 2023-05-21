@@ -1,0 +1,82 @@
+/*
+Name: Alwis Shaji
+Roll no: COBA001
+
+Write a program to implement Parallel Bubble Sort. Use existing algorithms
+and measure the performance of sequential and parallel algorithms.
+*/
+#include<iostream>
+#include<stdlib.h>
+#include<omp.h>
+using namespace std;
+
+void bubble(int *, int);
+void swap(int &, int &);
+
+void bubble(int *a, int n)
+{
+ 	for( int i = 0; i < n; i++ )
+ 	{ 
+ 	int first = i % 2; 
+ 	#pragma omp parallel for shared(a,first)
+ 	for( int j = first; j < n-1; j += 2 )
+ 	{ 
+ 		if( a[ j ] > a[ j+1 ] )
+ 		{ 
+ 			swap( a[ j ], a[ j+1 ] );
+ 		} 
+ 	} 
+ 	}
+}
+
+void swap(int &a, int &b)
+{
+ 	int test;
+
+ 	test=a;
+ 	a=b;
+ 	b=test;
+}
+
+int main()
+{
+ 	int *a,n;
+ 	cout<<"\n enter total no of elements=>";
+ 	cin>>n;
+ 	a=new int[n];
+ 	cout<<"\n enter elements=>";
+ 	for(int i=0;i<n;i++)
+ 	{
+ 		cin>>a[i];
+ 	}
+ 
+ 	bubble(a,n);
+ 
+ 	cout<<"\n sorted array is=>";
+ 	for(int i=0;i<n;i++)
+ 	{
+ 		cout<<a[i]<<endl;
+ 	}
+
+return 0;
+}
+-----------------------------------------------------------------------------------------------------------------
+stdlib in C, declares various utility functions for type conversions, memory allocation, algorithms, and other similar use cases. stdlib. h can be imported by adding #include <stdlib. h> at the top of the program
+
+
+OpenMP is a library for parallel programming in the SMP (symmetric multi-processors, or shared-memory processors) model. When programming with OpenMP, all threads share memory and data. OpenMP supports C, C++ and Fortran. The OpenMP functions are included in a header file called omp. h
+
+------------------------------------------------------------------------------------------------------------------
+
+ The code is a parallel for loop that iterates over the range of integers from 0 to n-1.
+ The code starts by initializing the variable i with 0, and then it increments i each time through the loop.
+ It also sets first equal to i%2 (so if I were to run this code on an 8-bit computer, first would be 4).
+ The #pragma omp parallel for shared(a,first) line tells OpenMP that we want our variables a and first to be shared between threads in order for them to be able to communicate with one another.
+ This is important because otherwise they would not have been able to swap values without crashing when they tried doing so.
+ Each iteration of the loop has two parts: for( int j = first; j < n-1; j += 2 ) { int second = j % 2; #pragma omp parallel for shared(a,second) }
+ The code attempts to iterate through an array of integers.
+ The code starts by initializing the value of i to 0, then increments it by 1 every time a loop iteration passes.
+ The first line in the function bubble() declares a pointer to point at the beginning of an integer array and sets its size to n-1 (n minus one).
+ The next 3 lines are used for setting up a parallel region which will be shared between the two threads.
+ It is important that this region has its own copy of the data being manipulated because otherwise, there would be no guarantee that any changes made in one thread would be seen in another thread.
+ The next line inside the parallel region defines a local variable named first which is initialized with i

@@ -1,0 +1,1 @@
+Google collab -> New notebook -> Set runtime to gpu -> Upload notebook -> Upload file then shift enter for each row
